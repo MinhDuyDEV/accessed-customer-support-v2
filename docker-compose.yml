@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - '${DATABASE_PORT}:27017'
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=${DATABASE_NAME}
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/${DATABASE_NAME} --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+# development
+# docker compose up -d
+
+# production
+# NODE_ENV=production docker compose up -d
+
