@@ -7,7 +7,7 @@ import { UsersModule } from './modules/users/users.module';
 import { HealthModule } from './modules/health/health.module';
 import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { ExceptionInterceptor } from './common/interceptors/exception.interceptor';
-import { GlobalExceptionFilter } from './filters/http-exception.filter';
+import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
