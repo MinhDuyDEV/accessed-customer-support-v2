@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './schemas/user.schema';
-import { FindAllResponse } from 'src/types/common.type';
+import { FindAllResponse } from 'src/common/types/common.type';
 
 @ApiTags('users')
 @Controller('users')

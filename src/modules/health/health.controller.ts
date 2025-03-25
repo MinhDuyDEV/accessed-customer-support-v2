@@ -5,7 +5,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('health')
 export class HealthController {
   @Get()
-  @Version('v1')
+  @Version('1')
   @ApiOperation({ summary: 'Check API health (v1)' })
   @ApiResponse({ status: 200, description: 'API is healthy' })
   checkHealth() {
@@ -17,7 +17,7 @@ export class HealthController {
   }
 
   @Get()
-  @Version('v2')
+  @Version('2')
   @ApiOperation({ summary: 'Check API health (v2)' })
   @ApiResponse({ status: 200, description: 'API is healthy with extended info' })
   checkHealthV2() {

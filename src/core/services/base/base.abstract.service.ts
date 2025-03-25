@@ -1,4 +1,4 @@
-import { FindAllResponse } from 'src/types/common.type';
+import { FindAllResponse } from 'src/common/types/common.type';
 import { BaseServiceInterface } from './base.interface.service';
 import { BaseRepositoryInterface } from 'src/core/repositories/base/base.interface.repository';
 import { BaseSchema } from 'src/core/schemas/base/base.schema';

@@ -1,4 +1,4 @@
-import { FindAllResponse } from 'src/types/common.type';
+import { FindAllResponse } from 'src/common/types/common.type';
 
 export interface Write<T> {
   create(item: T | any): Promise<T>;

@@ -1,6 +1,6 @@
 import { FilterQuery, Model, QueryOptions } from 'mongoose';
 import { BaseRepositoryInterface } from './base.interface.repository';
-import { FindAllResponse } from 'src/types/common.type';
+import { FindAllResponse } from 'src/common/types/common.type';
 import { BaseSchema } from 'src/core/schemas/base/base.schema';
 
 export abstract class BaseRepositoryAbstract<T extends BaseSchema>
