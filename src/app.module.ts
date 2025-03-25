@@ -5,6 +5,9 @@ import { validationSchema, validationOptions } from './config/validation.config'
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { HealthModule } from './modules/health/health.module';
+import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
+import { ExceptionInterceptor } from './common/interceptors/exception.interceptor';
+import { GlobalExceptionFilter } from './filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -27,6 +30,16 @@ import { HealthModule } from './modules/health/health.module';
     }),
     UsersModule,
     HealthModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ExceptionInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
   ],
 })
 export class AppModule {}
