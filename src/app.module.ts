@@ -4,6 +4,7 @@ import { databaseConfig } from './config/configuration.config';
 import { validationSchema, validationOptions } from './config/validation.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UsersModule } from './modules/users/users.module';
       inject: [ConfigService],
     }),
     UsersModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
