@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-// import { validationSchema, validationOptions } from './config/validation.config';
+import { validationSchema, validationOptions } from './config/validation.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { HealthModule } from './modules/health/health.module';
@@ -8,13 +8,16 @@ import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { ExceptionInterceptor } from './common/interceptors/exception.interceptor';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 import { configurations } from './config/configurations';
+import { TicketsModule } from './modules/tickets/tickets.module';
+import { ActivitiesModule } from './modules/activities/activities.module';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { NotesModule } from './modules/notes/notes.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      // Tạm thời tắt validation để khắc phục lỗi
-      // validationSchema,
-      // validationOptions,
+      validationSchema,
+      validationOptions,
       load: configurations,
       isGlobal: true,
       cache: true,
@@ -31,6 +34,10 @@ import { configurations } from './config/configurations';
     }),
     UsersModule,
     HealthModule,
+    TicketsModule,
+    ActivitiesModule,
+    TasksModule,
+    NotesModule,
   ],
   providers: [
     {
