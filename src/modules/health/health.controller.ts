@@ -1,30 +1,32 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Version } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('health')
 @Controller('health')
 export class HealthController {
   @Get()
-  @ApiOperation({ summary: 'Check API health' })
-  @ApiResponse({
-    status: 200,
-    description: 'API is healthy',
-    schema: {
-      type: 'object',
-      properties: {
-        status: { type: 'string', example: 'ok' },
-        timestamp: { type: 'string', example: '2023-03-25T12:34:56.789Z' },
-        uptime: { type: 'number', example: 1234.56 },
-        version: { type: 'string', example: '1.0.0' },
-      },
-    },
-  })
-  check() {
+  @Version('v1')
+  @ApiOperation({ summary: 'Check API health (v1)' })
+  @ApiResponse({ status: 200, description: 'API is healthy' })
+  checkHealth() {
     return {
       status: 'ok',
+      version: 'v1',
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get()
+  @Version('v2')
+  @ApiOperation({ summary: 'Check API health (v2)' })
+  @ApiResponse({ status: 200, description: 'API is healthy with extended info' })
+  checkHealthV2() {
+    return {
+      status: 'ok',
+      version: 'v2',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      version: process.env.npm_package_version || '1.0.0',
+      memory: process.memoryUsage(),
     };
   }
 }

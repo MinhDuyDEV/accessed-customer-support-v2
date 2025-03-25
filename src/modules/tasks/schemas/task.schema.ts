@@ -1,7 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { ApiProperty } from '@nestjs/swagger';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
+import { BaseSchema } from 'src/core/schemas/base/base.schema';
+
+export enum TaskStatus {
+  COMPLETED = 'completed',
+  PENDING = 'pending',
+}
 
 export type TaskDocument = Task & Document;
 
@@ -9,45 +14,24 @@ export type TaskDocument = Task & Document;
   timestamps: true,
   versionKey: false,
 })
-export class Task {
-  @ApiProperty({
-    description: 'Task description',
-    example: 'Validate that the problem has been resolved',
-  })
+export class Task extends BaseSchema {
   @Prop({ required: true })
+  title: string;
+
+  @Prop()
   description: string;
 
-  @ApiProperty({ description: 'Is task completed', example: false })
-  @Prop({ default: false })
-  isCompleted: boolean;
-
-  @ApiProperty({ description: 'Due date', example: '2023-12-14T12:00:00Z' })
-  @Prop({ required: true })
-  dueDate: Date;
-
-  @ApiProperty({ description: 'Related ticket ID', example: '60d5ec9af682fbd6a4221d77' })
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Ticket', required: true })
   ticket: MongooseSchema.Types.ObjectId;
 
-  @ApiProperty({ description: 'Assigned user ID', example: '60d5ec9af682fbd6a4221d44' })
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  assignedTo: MongooseSchema.Types.ObjectId;
+  assignee: MongooseSchema.Types.ObjectId;
 
-  @ApiProperty({ description: 'Created by user ID', example: '60d5ec9af682fbd6a4221d44' })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
-  createdBy: MongooseSchema.Types.ObjectId;
+  @Prop({ enum: TaskStatus, default: TaskStatus.PENDING })
+  status: string;
 
-  @ApiProperty({ description: 'Completion date', example: '2023-12-14T14:30:00Z' })
   @Prop()
-  completedAt: Date;
-
-  @ApiProperty({ description: 'Priority level', example: 'high' })
-  @Prop({ default: 'normal' })
-  priority: string;
-
-  @ApiProperty({ description: 'Reminder before due date (minutes)', example: 60 })
-  @Prop({ type: Number })
-  reminderMinutes: number;
+  dueDate: Date;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

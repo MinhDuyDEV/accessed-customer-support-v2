@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
-import { ApiProperty } from '@nestjs/swagger';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
+import { BaseSchema } from 'src/core/schemas/base/base.schema';
 
 export enum ActivityType {
   TICKET_CREATED = 'Ticket Created',
@@ -24,37 +24,21 @@ export type ActivityDocument = Activity & Document;
   timestamps: true,
   versionKey: false,
 })
-export class Activity {
-  @ApiProperty({
-    enum: ActivityType,
-    description: 'Activity type',
-    example: ActivityType.TICKET_CREATED,
-  })
+export class Activity extends BaseSchema {
   @Prop({ required: true, enum: ActivityType })
   type: ActivityType;
 
-  @ApiProperty({
-    description: 'Activity description',
-    example: 'Santi contacted for the first time',
-  })
-  @Prop({ required: true })
+  @Prop({ type: String })
   description: string;
 
-  @ApiProperty({ description: 'Related ticket ID', example: '60d5ec9af682fbd6a4221d77' })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+  user: MongooseSchema.Types.ObjectId;
+
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Ticket', required: true })
   ticket: MongooseSchema.Types.ObjectId;
 
-  @ApiProperty({ description: 'Performed by user ID', example: '60d5ec9af682fbd6a4221d44' })
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  performedBy: MongooseSchema.Types.ObjectId;
-
-  @ApiProperty({ description: 'Additional data as JSON' })
-  @Prop({ type: Object, default: {} })
-  metadata: Record<string, any>;
-
-  @ApiProperty({ description: 'Activity date', example: '2023-12-13T10:30:00Z' })
-  @Prop({ default: Date.now })
-  activityDate: Date;
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
 }
 
 export const ActivitySchema = SchemaFactory.createForClass(Activity);

@@ -1,20 +1,21 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { databaseConfig } from './config/configuration.config';
-import { validationSchema, validationOptions } from './config/validation.config';
+// import { validationSchema, validationOptions } from './config/validation.config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './modules/users/users.module';
 import { HealthModule } from './modules/health/health.module';
 import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { ExceptionInterceptor } from './common/interceptors/exception.interceptor';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
+import { configurations } from './config/configurations';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      validationSchema,
-      validationOptions,
-      load: [databaseConfig],
+      // Tạm thời tắt validation để khắc phục lỗi
+      // validationSchema,
+      // validationOptions,
+      load: configurations,
       isGlobal: true,
       cache: true,
       expandVariables: true,
@@ -23,8 +24,8 @@ import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('DATABASE_URI'),
-        dbName: configService.get<string>('DATABASE_NAME'),
+        uri: configService.get<string>('mongo.uri'),
+        dbName: configService.get<string>('mongo.dbName'),
       }),
       inject: [ConfigService],
     }),

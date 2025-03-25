@@ -4,16 +4,16 @@ services:
   mongodb:
     image: mongo:latest
     ports:
-      - '${DATABASE_PORT}:27017'
+      - '27017:27017'
     volumes:
       - mongodb_data:/data/db
     environment:
-      - MONGO_INITDB_DATABASE=${DATABASE_NAME}
+      - MONGO_INITDB_DATABASE=accessed-customer-support
     networks:
       - app-network
     restart: unless-stopped
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/${DATABASE_NAME} --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/accessed-customer-support --quiet
       interval: 10s
       timeout: 5s
       retries: 5

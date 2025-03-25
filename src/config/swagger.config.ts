@@ -1,23 +1,17 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
 
-export function setupSwagger(app: INestApplication, port: number, nodeEnv: string) {
+export function setupSwagger(
+  app: INestApplication,
+  port: number,
+  nodeEnv: string,
+  apiPrefix: string = 'api',
+  apiVersion: string = 'v1',
+) {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Accessed Customer Support API')
     .setDescription('API documentation for Accessed Customer Support')
-    .setVersion('1.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'access-token',
-    )
-    .addTag('auth', 'Authentication endpoints')
+    .setVersion(apiVersion.replace('v', ''))
     .addTag('users', 'User management endpoints')
     .addTag('health', 'Health check endpoints')
     .build();
@@ -30,7 +24,7 @@ export function setupSwagger(app: INestApplication, port: number, nodeEnv: strin
     // document.paths = filterEndpointsForProduction(document.paths);
   }
 
-  SwaggerModule.setup('api/docs', app, document, {
+  SwaggerModule.setup(`${apiPrefix}/docs`, app, document, {
     swaggerOptions: {
       persistAuthorization: true,
       docExpansion: 'none',
