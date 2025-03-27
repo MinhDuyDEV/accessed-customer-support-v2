@@ -6,6 +6,13 @@ import { BaseSchema } from 'src/core/schemas/base/base.schema';
 export enum TaskStatus {
   COMPLETED = 'completed',
   PENDING = 'pending',
+  IN_PROGRESS = 'in_progress',
+}
+
+export enum TaskPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
 }
 
 export type TaskDocument = Task & Document;
@@ -30,9 +37,19 @@ export class Task extends BaseSchema {
   @Prop({ enum: TaskStatus, default: TaskStatus.PENDING })
   status: string;
 
+  @Prop({ enum: TaskPriority, default: TaskPriority.MEDIUM })
+  priority: string;
+
   @Prop()
   dueDate: Date;
+
+  @Prop({ type: Date })
+  completedAt: Date;
+
+  @Prop({ type: Object })
+  metadata: Record<string, any>;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
+
 TaskSchema.plugin(mongoosePaginate);

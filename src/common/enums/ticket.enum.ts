@@ -1,20 +1,24 @@
 export enum TicketType {
-  INCIDENT = 'Incident',
-  PROBLEM = 'Problem',
-  QUESTION = 'Question',
-  SUGGESTION = 'Suggestion',
+  INCIDENT = 'INCIDENT',
+  PROBLEM = 'PROBLEM',
+  CHANGE_REQUEST = 'CHANGE_REQUEST',
+  SERVICE_REQUEST = 'SERVICE_REQUEST',
+  QUESTION = 'QUESTION',
+  FEEDBACK = 'FEEDBACK',
 }
 
 export enum TicketStatus {
-  OPEN = 'Open',
-  IN_PROGRESS = 'In Progress',
-  RESOLVED = 'Resolved',
-  CLOSED = 'Closed',
-  OVERDUE = 'Overdue',
+  OPEN = 'OPEN',
+  IN_PROGRESS = 'IN_PROGRESS',
+  PENDING = 'PENDING',
+  RESOLVED = 'RESOLVED',
+  CLOSED = 'CLOSED',
+  REOPENED = 'REOPENED',
 }
 
 export enum Priority {
-  HIGH = 'High',
-  MEDIUM = 'Medium',
-  LOW = 'Low',
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT',
 }

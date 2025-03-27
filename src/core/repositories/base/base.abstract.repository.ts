@@ -17,6 +17,7 @@ export abstract class BaseRepositoryAbstract<T extends BaseSchema>
 
   async findOneById(id: string, projection?: string, options?: QueryOptions<T>): Promise<T> {
     const item = await this.model.findById(id, projection, options);
+    if (!item) return null;
     return item.deletedAt ? null : item;
   }
 
@@ -35,8 +36,17 @@ export abstract class BaseRepositoryAbstract<T extends BaseSchema>
       this.model.find({ ...condition, deletedAt: null }, options?.projection, options),
     ]);
     return {
-      count,
-      items,
+      docs: items,
+      totalDocs: count,
+      limit: options?.limit || 10,
+      totalPages: Math.ceil(count / (options?.limit || 10)),
+      page: options?.page || 1,
+      pagingCounter: ((options?.page || 1) - 1) * (options?.limit || 10) + 1,
+      hasPrevPage: (options?.page || 1) > 1,
+      hasNextPage: (options?.page || 1) * (options?.limit || 10) < count,
+      prevPage: (options?.page || 1) > 1 ? (options?.page || 1) - 1 : null,
+      nextPage:
+        (options?.page || 1) * (options?.limit || 10) < count ? (options?.page || 1) + 1 : null,
     };
   }
 

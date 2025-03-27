@@ -5,16 +5,16 @@ import { BaseSchema } from 'src/core/schemas/base/base.schema';
 
 export enum ActivityType {
   TICKET_CREATED = 'Ticket Created',
-  TYPE_CHANGED = 'Type Changed',
-  PRIORITY_CHANGED = 'Priority Changed',
-  STATUS_CHANGED = 'Status Changed',
+  TYPE_CHANGED = 'Change Ticket Type to',
+  PRIORITY_CHANGED = 'Change Ticket Priority to',
+  STATUS_CHANGED = 'Change Ticket Status to',
   ASSIGNED = 'Assigned',
   NOTE_ADDED = 'Note Added',
   ATTACHMENT_ADDED = 'Attachment Added',
   TASK_CREATED = 'Task Created',
   TASK_COMPLETED = 'Task Completed',
-  CALL = 'Call',
-  EMAIL = 'Email',
+  CALL = 'Going to call with',
+  EMAIL = 'Send email to',
   CLIENT_CONTACTED = 'Client Contacted',
 }
 
@@ -31,15 +31,16 @@ export class Activity extends BaseSchema {
   @Prop({ type: String })
   description: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
-  user: MongooseSchema.Types.ObjectId;
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Customer' })
+  customer: MongooseSchema.Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Ticket', required: true })
   ticket: MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: Date, default: Date.now })
-  createdAt: Date;
+  @Prop({ type: Object })
+  metadata: Record<string, any>;
 }
 
 export const ActivitySchema = SchemaFactory.createForClass(Activity);
+
 ActivitySchema.plugin(mongoosePaginate);

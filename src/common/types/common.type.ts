@@ -3,7 +3,18 @@ export enum SORT_TYPE {
   'ASC' = 'acs',
 }
 
-export type FindAllResponse<T> = { count: number; items: T[] };
+export interface FindAllResponse<T> {
+  docs: T[];
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: number | null;
+  nextPage: number | null;
+}
 
 export type SortParams = { sort_by: string; sort_type: SORT_TYPE };
 

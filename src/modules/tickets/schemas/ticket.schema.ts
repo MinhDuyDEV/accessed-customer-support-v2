@@ -9,13 +9,15 @@ export type TicketDocument = Ticket & Document;
 @Schema({
   timestamps: true,
   versionKey: false,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
 })
 export class Ticket extends BaseSchema {
   @Prop({ required: true, unique: true })
   ticketId: string;
 
   @Prop({ required: true })
-  CustomerId: string;
+  customerId: string;
 
   @Prop({ type: Object, default: {} })
   customer: Record<string, any>;
@@ -25,9 +27,6 @@ export class Ticket extends BaseSchema {
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
   createBy: MongooseSchema.Types.ObjectId;
-
-  @Prop({ required: true })
-  ticketName: string;
 
   @Prop({ required: true })
   subject: string;
@@ -52,19 +51,32 @@ export class Ticket extends BaseSchema {
 
   @Prop()
   resolutionDue: Date;
-
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Activity' }], default: [] })
-  activities: MongooseSchema.Types.ObjectId[];
-
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Task' }], default: [] })
-  tasks: MongooseSchema.Types.ObjectId[];
-
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Note' }], default: [] })
-  notes: MongooseSchema.Types.ObjectId[];
-
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'File' }], default: [] })
-  media: MongooseSchema.Types.ObjectId[];
 }
 
 export const TicketSchema = SchemaFactory.createForClass(Ticket);
+
+TicketSchema.virtual('recentActivities', {
+  ref: 'Activity',
+  localField: '_id',
+  foreignField: 'ticket',
+  options: {
+    sort: { createdAt: -1 },
+    limit: 3,
+  },
+});
+
+TicketSchema.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'ticket',
+  options: { sort: { createdAt: -1 } },
+});
+
+TicketSchema.virtual('notes', {
+  ref: 'Note',
+  localField: '_id',
+  foreignField: 'ticket',
+  options: { sort: { createdAt: -1 } },
+});
+
 TicketSchema.plugin(mongoosePaginate);
