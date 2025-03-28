@@ -1,6 +1,6 @@
 export enum CustomerStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  PENDING = 'pending',
-  DELETED = 'deleted',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  PENDING = 'PENDING',
+  DELETED = 'DELETED',
 }

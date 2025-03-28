@@ -3,10 +3,6 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from '
 import { TicketType } from 'src/common/enums/ticket.enum';
 
 export class CreateTicketDto {
-  @ApiProperty({
-    description: 'Customer ID',
-    example: '67e288839901996033c0e70f',
-  })
   @IsOptional()
   @IsString()
   customerId: string;

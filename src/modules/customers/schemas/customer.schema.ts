@@ -12,6 +12,12 @@ export type CustomerDocument = Customer & Document;
 })
 export class Customer extends BaseSchema {
   @Prop({ required: true })
+  customerId: string;
+
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
   firstName: string;
 
   @Prop({ required: true })
