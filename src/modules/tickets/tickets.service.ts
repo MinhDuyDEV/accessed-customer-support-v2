@@ -10,6 +10,7 @@ import { TicketStatus, Priority } from 'src/common/enums/ticket.enum';
 import { TICKET_TYPE_PRIORITY_MAP } from 'src/common/constants/ticket-type-priority-map';
 import { ActivityType } from '../activities/schemas/activity.schema';
 import { SLA_CONFIG } from 'src/common/constants/sla-config';
+import { CustomersService } from '../customers/customers.service';
 
 @Injectable()
 export class TicketsService extends BaseServiceAbstract<Ticket> {
@@ -17,13 +18,16 @@ export class TicketsService extends BaseServiceAbstract<Ticket> {
     @Inject('TicketsRepositoryInterface')
     private readonly ticketsRepository: TicketsRepositoryInterface,
     private readonly activitiesService: ActivitiesService,
+    private readonly customersService: CustomersService,
   ) {
     super(ticketsRepository);
   }
 
   async create(createTicketDto: CreateTicketDto) {
-    const customer = await this.validateCustomer(createTicketDto.customerId);
-    const ticketId = `TK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const customer = await this.customersService.findCustomerFromPartyService(
+      createTicketDto.customerId,
+    );
+    const ticketId = `#TC-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
     const priority = TICKET_TYPE_PRIORITY_MAP[createTicketDto.ticketType] || Priority.LOW;
     const sla = SLA_CONFIG[priority];
     const firstResponseDue = new Date(new Date().getTime() + sla.firstResponse * 60 * 60 * 1000);
@@ -33,8 +37,13 @@ export class TicketsService extends BaseServiceAbstract<Ticket> {
       ...createTicketDto,
       ticketId,
       customerId: createTicketDto.customerId,
-      customer: customer,
-      createBy: createTicketDto.customerId || null,
+      customer: {
+        id: customer._id,
+        customerId: customer.customerId,
+        name: customer.name,
+        avatar: customer.avatar,
+      },
+      createBy: customer._id || null,
       status: TicketStatus.OPEN,
       priority,
       firstResponseDue,
@@ -46,7 +55,7 @@ export class TicketsService extends BaseServiceAbstract<Ticket> {
     await this.activitiesService.create({
       type: ActivityType.TICKET_CREATED,
       description: `Ticket ${ticketId} created`,
-      customer: createTicketDto.customerId,
+      customer: customer._id,
       ticket: ticket._id,
       metadata: {
         priority,
@@ -56,24 +65,6 @@ export class TicketsService extends BaseServiceAbstract<Ticket> {
     });
 
     return ticket;
-  }
-
-  private async validateCustomer(customerId: string) {
-    // TODO: Implement customer validation from party service
-    const customer = {
-      id: customerId,
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      phone: '+1234567890',
-      address: '123 Main St, Anytown, USA',
-      city: 'Anytown',
-    };
-    if (!customer) {
-      throw new NotFoundException('Customer not found');
-    }
-
-    return customer;
   }
 
   private async determineAssignee(priority: Priority, ticketType: string) {
@@ -142,7 +133,7 @@ export class TicketsService extends BaseServiceAbstract<Ticket> {
     const populateOptions = {
       populate: [
         {
-          path: 'recentActivities',
+          path: 'activities',
           select: 'type description createdAt user',
           options: { sort: { createdAt: -1 }, limit: 3 },
         },
@@ -154,6 +145,11 @@ export class TicketsService extends BaseServiceAbstract<Ticket> {
         {
           path: 'notes',
           select: 'content createdAt createdBy isPrivate',
+          options: { sort: { createdAt: -1 }, limit: 3 },
+        },
+        {
+          path: 'media',
+          select: 'fileId filename path',
           options: { sort: { createdAt: -1 }, limit: 3 },
         },
       ],

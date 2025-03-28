@@ -1,19 +1,19 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { CustomerRepositoryInterface } from './interfaces/customer.interface';
 import { Customer } from 'src/modules/customers/schemas/customer.schema';
 import { BaseRepositoryAbstract } from './base/base.abstract.repository';
+import { CustomersRepositoryInterface } from './interfaces/customers.interface';
 
 @Injectable()
-export class CustomerRepository
+export class CustomersRepository
   extends BaseRepositoryAbstract<Customer>
-  implements CustomerRepositoryInterface
+  implements CustomersRepositoryInterface
 {
   constructor(
     @InjectModel(Customer.name)
-    private readonly customerRepository: Model<Customer>,
+    private readonly customersRepository: Model<Customer>,
   ) {
-    super(customerRepository);
+    super(customersRepository);
   }
 }

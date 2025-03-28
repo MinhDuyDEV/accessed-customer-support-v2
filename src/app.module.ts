@@ -11,7 +11,10 @@ import { TicketsModule } from './modules/tickets/tickets.module';
 import { ActivitiesModule } from './modules/activities/activities.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { NotesModule } from './modules/notes/notes.module';
-import { CustomersModule } from './modules/customers/customer.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthInterceptor } from './common/interceptors/auth.interceptor';
+import { TokenService } from './common/services/token.service';
 
 @Module({
   imports: [
@@ -23,6 +26,14 @@ import { CustomersModule } from './modules/customers/customer.module';
       cache: true,
       expandVariables: true,
       envFilePath: process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '60m' },
+      }),
+      inject: [ConfigService],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -40,9 +51,14 @@ import { CustomersModule } from './modules/customers/customer.module';
     CustomersModule,
   ],
   providers: [
+    TokenService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ExceptionInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuthInterceptor,
     },
     {
       provide: APP_FILTER,

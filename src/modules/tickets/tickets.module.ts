@@ -5,11 +5,13 @@ import { TicketsController } from './tickets.controller';
 import { Ticket, TicketSchema } from './schemas/ticket.schema';
 import { TicketsRepository } from 'src/core/repositories/tickets.repository';
 import { ActivitiesModule } from '../activities/activities.module';
+import { CustomersModule } from '../customers/customers.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Ticket.name, schema: TicketSchema }]),
     ActivitiesModule,
+    CustomersModule,
   ],
   controllers: [TicketsController],
   providers: [

@@ -10,6 +10,7 @@ import {
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { QueryTicketDto } from './dto/query-ticket.dto';
+import { Customer } from 'src/common/decorators/customer.decorator';
 // import { Customer } from 'src/common/decorators/customer.decorator';
 // import { CustomerTokenInterceptor } from 'src/common/interceptors/customer-token.interceptor';
 
@@ -27,21 +28,8 @@ export class TicketsController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid customer token' })
   @Version('1')
-  createTicket(
-    @Body() createTicketDto: CreateTicketDto,
-    // @Customer() customer: any
-  ) {
-    // if (!customer || !customer.id) {
-    //   throw new BadRequestException('Customer information is required');
-    // }
-    const customer = {
-      id: '67e288839901996033c0e70f',
-    };
-
-    if (!createTicketDto.customerId) {
-      createTicketDto.customerId = customer.id;
-    }
-
+  createTicket(@Body() createTicketDto: CreateTicketDto, @Customer() customer: any) {
+    createTicketDto.customerId = customer.id;
     return this.ticketsService.create(createTicketDto);
   }
 
@@ -49,7 +37,8 @@ export class TicketsController {
   @ApiOperation({ summary: 'Get all tickets with filtering and pagination' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Return all tickets matching the criteria' })
   @Version('1')
-  getTickets(@Query() queryTicketDto: QueryTicketDto) {
+  getTickets(@Query() queryTicketDto: QueryTicketDto, @Customer() customer: any) {
+    console.log('customer', customer);
     return this.ticketsService.findAll(queryTicketDto);
   }
 

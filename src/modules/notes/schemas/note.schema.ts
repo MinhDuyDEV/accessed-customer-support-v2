@@ -24,4 +24,12 @@ export class Note extends BaseSchema {
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);
+
+NoteSchema.virtual('media', {
+  ref: 'File',
+  localField: '_id',
+  foreignField: 'note',
+  options: { sort: { createdAt: -1 } },
+});
+
 NoteSchema.plugin(mongoosePaginate);
